@@ -29,7 +29,7 @@ Resources:
       - AWSLambdaBasicExecutionRole
       - DynamoDBCrudPolicy:
           TableName: UserUploads
-      CodeUri: s3://dakobed-serverless-apis/cc8f1bdfebc22edda4f907ad228e9383
+      CodeUri: s3://dakobed-serverless-apis/908752fdb921016535d1c36f110e5888
       Handler: app.lambda_handler
       Runtime: python3.7
       Environment:
@@ -100,3 +100,36 @@ Resources:
                 Fn::Sub: arn:aws:s3:::${BucketName}
       Queues:
       - Ref: TransformQueue
+Outputs:
+  UploadApi:
+    Description: API Gateway endpoint URL for Prod stage upload API
+    Value:
+      Fn::Sub: https://${UploadApi}.execute-api.${AWS::Region}.amazonaws.com/Prod
+    Export:
+      Name:
+        Fn::Join:
+        - ':'
+        - - Ref: AWS::StackName
+          - UploadApi
+  S3UploadBucket:
+    Description: API Gateway endpoint URL for Prod stage upload API
+    Value:
+      Ref: BucketName
+    Export:
+      Name:
+        Fn::Join:
+        - ':'
+        - - Ref: AWS::StackName
+          - S3UploadBucket
+  UploadBucketARN:
+    Description: API Gateway endpoint URL for Prod stage upload API
+    Value:
+      Fn::GetAtt:
+      - S3UploadBucket
+      - Arn
+    Export:
+      Name:
+        Fn::Join:
+        - ':'
+        - - Ref: AWS::StackName
+          - upload-bucket-arn
