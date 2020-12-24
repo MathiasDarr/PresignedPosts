@@ -2,9 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Dakobed Rest API Service
 Parameters:
-  QueueName:
-    Type: String
-    Default: LibrosaTransformsQueue
   BucketName:
     Type: String
     Default: dakobed-sqs-transform-bucket
@@ -24,8 +21,6 @@ Resources:
       - S3CrudPolicy:
           BucketName:
             Ref: BucketName
-      - SQSSendMessagePolicy:
-          QueueName: InitiateTransformsQueue
       - AWSLambdaBasicExecutionRole
       - DynamoDBCrudPolicy:
           TableName: UserUploads
@@ -59,13 +54,6 @@ Resources:
     Properties:
       BucketName:
         Ref: BucketName
-      NotificationConfiguration:
-        QueueConfigurations:
-        - Event: s3:ObjectCreated:Post
-          Queue:
-            Fn::GetAtt:
-            - TransformQueue
-            - Arn
       CorsConfiguration:
         CorsRules:
         - AllowedHeaders:
@@ -77,29 +65,6 @@ Resources:
           - POST
           AllowedOrigins:
           - '*'
-  TransformQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName:
-        Ref: QueueName
-  SQSQueuePolicy:
-    Type: AWS::SQS::QueuePolicy
-    DependsOn: TransformQueue
-    Properties:
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Principal:
-            AWS: '*'
-          Action: SQS:SendMessage
-          Resource: '*'
-          Condition:
-            ArnLike:
-              aws:SourceArn:
-                Fn::Sub: arn:aws:s3:::${BucketName}
-      Queues:
-      - Ref: TransformQueue
 Outputs:
   UploadApi:
     Description: API Gateway endpoint URL for Prod stage upload API

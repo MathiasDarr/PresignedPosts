@@ -26,7 +26,7 @@ export default {
         async fetch_presigned_url(file){
             try{
                 var name = this.file.name
-                var url ='https://nt5hbpe6rd.execute-api.us-west-2.amazonaws.com/Prod/signedURL'
+                var url ='https://mm9mxhmvmk.execute-api.us-west-2.amazonaws.com/Prod/signedURL'
                 var body = {userID:'dakobedbard@gmail.com', filename:name}
                 const response = await axios.post(url, body)
                 console.log(response.data.presigned)
